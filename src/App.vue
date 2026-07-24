@@ -81,12 +81,14 @@ export default defineComponent({
 
 <template>
   <main
-    class="text-white min-h-screen min-w-screen text-sm tracking-wide flex items-start justify-start w-full min-h-screen"
+    class="bg-[#F88379] text-white min-h-screen min-w-screen text-sm tracking-wide flex items-center w-full min-h-screen"
   >
     <div
-      class="bg-linear-to-l from-[#F88379] to-[#af4949] h-[85vh] flex flex-col items-center justify-center h-screen w-[70%] p-5 gap-5 opacity-90"
+      class="h-[85vh] flex flex-col items-center justify-center h-screen w-[70%] p-5 gap-5 opacity-90 mx-auto"
     >
-      <div class="flex flex-col items-center justify-center gap-5 w-[60%]">
+      <div
+        class="flex flex-col items-center justify-center gap-5 w-[60%] max-w-[600px]"
+      >
         <img
           class="w-full h-60 object-cover"
           src="https://www.rollingstone.com/wp-content/uploads/2018/06/weeknd-starboy-album-review-92e9ca7c-8701-41e0-8720-2102a52cd1dd.jpg"
@@ -126,7 +128,7 @@ export default defineComponent({
     </div>
 
     <div
-      class="bg-[#af4949] opacity-90 flex flex-col items-center w-[30%] h-screen"
+      class="bg-[#af4949] opacity-90 flex flex-col items-center w-[30%] h-screen ml-auto"
     >
       <input
         class="border-b-1 border-gray-900 w-full p-3"
