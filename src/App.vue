@@ -1,12 +1,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import PlayIcon from "./components/icons/play-icon.vue";
 import PauseIcon from "./components/icons/pause-icon.vue";
 import LeftIcon from "./components/icons/chevron-left-icon.vue";
 import RightIcon from "./components/icons/chevron-right-icon.vue";
-import Music from "./sample-0.mp3";
 
 export default defineComponent({
   name: "TimerTodoApp",
@@ -22,24 +21,34 @@ export default defineComponent({
       playing: false,
       currentDuration: 0,
       totalDuration: 0,
+      songs: [],
+      selected: null,
     };
   },
   async mounted() {
-    this.current = new Audio(Music);
+    //invoke("scan_folder", {folder: "/Users/therealrinku/code/rowan-music/src" });
 
-    this.current.addEventListener("timeupdate", () => {
-      this.currentDuration = this.current.currentTime;
-    });
-
-    this.current.addEventListener("loadeddata", () => {
-      this.totalDuration = this.current.duration;
-    });
-
-    this.current.addEventListener("ended", () => {
-      this.playing = false;
-    });
+    const songs = await invoke("get_songs");
+    this.songs = songs;
   },
   unmounted() {},
+  watch: {
+    current() {
+      if (!this.current) return;
+
+      this.current.addEventListener("timeupdate", () => {
+        this.currentDuration = this.current.currentTime;
+      });
+
+      this.current.addEventListener("loadeddata", () => {
+        this.totalDuration = this.current.duration;
+      });
+
+      this.current.addEventListener("ended", () => {
+        this.playing = false;
+      });
+    },
+  },
   computed: {
     formattedTotalDuration() {
       if (!this.totalDuration) return "00:00";
@@ -66,7 +75,14 @@ export default defineComponent({
     },
   },
   methods: {
+    playSong(song) {
+      this.current = new Audio(convertFileSrc(song.path));
+      console.log(this.current);
+      this.selected = song;
+    },
     playPause() {
+      if (!this.current) return;
+
       if (this.current.paused) {
         this.current.play();
         this.playing = true;
@@ -137,32 +153,12 @@ export default defineComponent({
       />
 
       <div class="flex flex-col w-full max-h-[89vh] overflow-y-auto">
-        <button class="border-b w-full py-3 pl-3 flex">
-          ♫ Bruno Mars - Die with a smile
-        </button>
-        <button class="border-b w-full py-3 pl-3 flex">
-          ♫ Adele - Someone like you
-        </button>
-        <button class="border-b w-full py-3 pl-3 flex">
-          ♫ Adele - Someone like you
-        </button>
-        <button class="border-b w-full py-3 pl-3 flex">
-          ♫ Adele - Someone like you
-        </button>
-        <button class="border-b w-full py-3 pl-3 flex">
-          ♫ Adele - Someone like you
-        </button>
-        <button class="border-b w-full py-3 pl-3 flex">
-          ♫ Adele - Someone like you
-        </button>
-        <button class="border-b w-full py-3 pl-3 flex">
-          ♫ Adele - Someone like you
-        </button>
-        <button class="border-b w-full py-3 pl-3 flex">
-          ♫ Adele - Someone like you
-        </button>
-        <button class="w-full py-3 pl-3 flex">
-          ♫ Adele - Someone like you
+        <button
+          v-for="song in songs"
+          class="border-b w-full py-3 pl-3 flex"
+          @click="playSong(song)"
+        >
+          ♫ {{ song.path.split("/").pop() }}
         </button>
       </div>
     </div>

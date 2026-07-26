@@ -87,7 +87,7 @@ pub fn get_songs() -> rusqlite::Result<Vec<Music>> {
     let db = Database::new()?;
     db.setup_table();
 
-    let mut stmt = db.conn.prepare("SELECT id, title, artist, genre, album, year, cover_image_path, search_text, duration, path FROM songs")?;
+    let mut stmt = db.conn.prepare("SELECT id, title, artist, genre, album, year, cover_image_path, search_text, duration, path FROM music")?;
     
     let songs = stmt.query_map([], |row| {
         Ok(Music {
@@ -126,6 +126,7 @@ pub fn scan(folder: &str) -> Result<()> {
             if let Some(ext) = path.extension() {
                 // FIXME: mp3 only for now
                 if ext == "mp3" {
+                    println!("format {} arguments", path.display());
                     let music_data = extract_metadata(path);
                     db.add_song(&music_data)?;
                 }
