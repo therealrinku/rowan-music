@@ -139,11 +139,11 @@ export default defineComponent({
           <MusicIcon v-else />
         </div>
 
-        <p v-if="selected">
-          {{
-            selected.title ||
-            selected.path.split("/").pop().split(".").slice(0, -1).join("")
-          }}
+        <p v-if="selected && selected.title && selected.artist">
+          {{ selected.artist }} - {{ selected.title }}
+        </p>
+        <p v-else-if="selected">
+          {{ selected.path.split("/").pop().split(".").slice(0, -1).join("") }}
         </p>
         <p v-else>select a music to get started</p>
 
