@@ -30,6 +30,10 @@ export default defineComponent({
 
     const songs = await invoke("get_songs");
     this.songs = songs;
+    if (this.songs.length) {
+      this.selected = this.songs[0];
+      this.current = new Audio(convertFileSrc(this.songs[0].path));
+    }
   },
   unmounted() {},
   watch: {
