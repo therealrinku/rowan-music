@@ -27,6 +27,7 @@ export default defineComponent({
       totalDuration: 0,
       songs: [],
       selected: null,
+      selectedIndex: -1,
     };
   },
   async mounted() {
@@ -34,6 +35,7 @@ export default defineComponent({
     this.songs = songs;
     if (this.songs.length) {
       this.selected = this.songs[0];
+      this.selectedIndex = 0;
       this.current = new Audio(convertFileSrc(this.songs[0].path));
     }
   },
@@ -93,16 +95,24 @@ export default defineComponent({
       this.songs = songs;
       if (this.songs.length) {
         this.selected = this.songs[0];
+        this.selectedIndex = 0;
         this.current = new Audio(convertFileSrc(this.songs[0].path));
       }
     },
-    playSong(song) {
+    playSong(song, index) {
       if (this.current && !this.current.paused) {
         this.current.pause();
         this.playing = false;
       }
       this.current = new Audio(convertFileSrc(song.path));
       this.selected = song;
+      this.selectedIndex = index;
+    },
+    prevSong() {
+      this.playSong(this.songs[this.selectedIndex - 1], this.selectedIndex - 1);
+    },
+    nextSong() {
+      this.playSong(this.songs[this.selectedIndex + 1], this.selectedIndex + 1);
     },
     playPause() {
       if (!this.current) return;
@@ -165,7 +175,7 @@ export default defineComponent({
         </div>
 
         <div class="flex items-center gap-5">
-          <button>
+          <button @click="prevSong" :disabled="songs[currentIndex - 1]">
             <LeftIcon />
           </button>
 
@@ -174,7 +184,11 @@ export default defineComponent({
             <PlayIcon v-else />
           </button>
 
-          <button click="nextDay">
+          <button
+            @click="nextSong"
+            click="nextDay"
+            :disabled="songs[currentIndex + 1]"
+          >
             <RightIcon />
           </button>
         </div>
@@ -192,9 +206,9 @@ export default defineComponent({
 
       <div class="flex flex-col w-full max-h-[89vh] overflow-y-auto">
         <button
-          v-for="song in songs"
+          v-for="(song, index) in songs"
           class="border-b border-[#F88379] w-full py-3 pl-3 flex cursor-pointer"
-          @click="playSong(song)"
+          @click="playSong(song, index)"
         >
           ♫
           {{
