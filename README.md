@@ -18,3 +18,8 @@
 <img src="https://img.shields.io/badge/vue-000000?style=for-the-badge&logo=vue.js&logoColor=white"/>
 <img src="https://img.shields.io/badge/typescript-000000?style=for-the-badge&logo=typescript&logoColor=blue"/>
 <img src="https://img.shields.io/badge/tailwindcss-000000?style=for-the-badge&logo=tailwindcss&logoColor=blue"/>
+
+
+## Screenshots
+
+<img width="1225" height="757" alt="Screenshot 2026-07-28 at 13 28 54" src="https://github.com/user-attachments/assets/5d7740f6-4dcd-4622-adc4-983ebe757cbf" />
