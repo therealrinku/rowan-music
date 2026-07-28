@@ -2,6 +2,7 @@
 import { defineComponent } from "vue";
 import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import MusicIcon from "./components/icons/music-icon.vue";
 import PlayIcon from "./components/icons/play-icon.vue";
 import PauseIcon from "./components/icons/pause-icon.vue";
 import LeftIcon from "./components/icons/chevron-left-icon.vue";
@@ -16,6 +17,7 @@ export default defineComponent({
     LeftIcon,
     RightIcon,
     Landing,
+    MusicIcon,
   },
   data() {
     return {
@@ -126,10 +128,16 @@ export default defineComponent({
       <div
         class="flex flex-col items-center justify-center gap-5 w-[60%] max-w-[600px]"
       >
-        <img
-          class="w-full h-60 object-cover"
-          src="https://e7.pngegg.com/pngimages/784/317/png-clipart-blue-angle-symbol-number-music-library-blue-music-icon-illustration-blue-angle-thumbnail.png"
-        />
+        <div
+          class="h-60 flex flex-col items-center justify-center border w-full rounded-lg"
+        >
+          <img
+            v-if="selected.cover_image_path"
+            :src="selected.cover_image_path"
+            class="w-full h-full object-cover"
+          />
+          <MusicIcon v-else />
+        </div>
 
         <p v-if="selected">
           {{
@@ -145,9 +153,9 @@ export default defineComponent({
             <p>{{ formattedTotalDuration }}</p>
           </div>
 
-          <div class="w-full bg-zinc-300 h-1">
+          <div class="w-full bg-white h-1">
             <div
-              class="h-full bg-white"
+              class="h-full bg-green-300"
               :style="{ width: currentDurPer + '%' }"
             ></div>
           </div>
@@ -174,7 +182,7 @@ export default defineComponent({
       class="bg-[#af4949] opacity-90 flex flex-col items-center w-[30%] h-screen ml-auto"
     >
       <input
-        class="border-b-1 border-gray-900 w-full p-3"
+        class="border-b-1 border-[#F88379] w-full p-3 outline-none"
         type="text"
         placeholder="Search..."
       />
@@ -182,7 +190,7 @@ export default defineComponent({
       <div class="flex flex-col w-full max-h-[89vh] overflow-y-auto">
         <button
           v-for="song in songs"
-          class="border-b border-white-400 w-full py-3 pl-3 flex cursor-pointer"
+          class="border-b border-[#F88379] w-full py-3 pl-3 flex cursor-pointer"
           @click="playSong(song)"
         >
           ♫
