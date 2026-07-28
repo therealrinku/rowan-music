@@ -55,6 +55,7 @@ export default defineComponent({
 
       this.current.addEventListener("ended", () => {
         this.playing = false;
+        this.nextSong();
       });
     },
   },
@@ -112,6 +113,8 @@ export default defineComponent({
       }
     },
     playSong(song, index) {
+      if (!song) return;
+
       if (this.current && !this.current.paused) {
         this.current.pause();
         this.playing = false;
@@ -119,6 +122,8 @@ export default defineComponent({
       this.current = new Audio(convertFileSrc(song.path));
       this.selected = song;
       this.selectedIndex = index;
+      this.current.play();
+      this.playing = true;
     },
     prevSong() {
       this.playSong(
