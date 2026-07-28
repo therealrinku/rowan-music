@@ -75,6 +75,11 @@ impl Database {
        Ok(())
     }
 
+    fn clean_previous(&self) -> Result<()> {
+      self.conn.execute("DELETE FROM music", []);
+      Ok(())
+    }
+
     fn get_songs(&self) -> Result<rusqlite::Statement> {
       let stmt = self.conn.prepare("SELECT * FROM music WHERE search_text LIKE ?1 LIMIT 100 OFFSET ?2")?;
       // Note: If executing immediately, parameters are bound during query execution. 
@@ -116,6 +121,9 @@ pub fn scan(folder: &str) -> Result<()> {
     let db = Database::new()?;
     db.setup_table();
 
+    // clean exisiting data
+    db.clean_previous();   
+
     for entry in WalkDir::new(folder)
         .into_iter()
         .filter_map(|e| e.ok())
@@ -126,7 +134,6 @@ pub fn scan(folder: &str) -> Result<()> {
             if let Some(ext) = path.extension() {
                 // FIXME: mp3 only for now
                 if ext == "mp3" {
-                    println!("format {} arguments", path.display());
                     let music_data = extract_metadata(path);
                     db.add_song(&music_data)?;
                 }
