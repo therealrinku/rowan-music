@@ -86,6 +86,10 @@ export default defineComponent({
     },
   },
   methods: {
+    async clearLib() {
+      await invoke("clear_lib");
+      this.songs = [];
+    },
     onSelectFolder(folder) {
       this.selectedFolder = folder;
       this.scan(this.selectedFolder);
@@ -203,6 +207,10 @@ export default defineComponent({
         type="text"
         placeholder="Search..."
       />
+
+      <button @click="clearLib" class="absolute right-3 top-3 cursor-pointer">
+        ↺
+      </button>
 
       <div class="flex flex-col w-full max-h-[89vh] overflow-y-auto">
         <button

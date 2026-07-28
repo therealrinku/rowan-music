@@ -95,6 +95,13 @@ impl Database {
     }
 }
 
+pub fn clear_lib() -> Result<()> {
+    let db = Database::new()?;
+    db.setup_table();
+    db.clean_previous();
+    Ok(())
+}
+
 pub fn get_songs() -> rusqlite::Result<Vec<Music>> {
     let db = Database::new()?;
     db.setup_table();
