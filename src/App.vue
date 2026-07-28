@@ -21,6 +21,7 @@ export default defineComponent({
   },
   data() {
     return {
+      search: "",
       current: null,
       playing: false,
       currentDuration: 0,
@@ -58,6 +59,13 @@ export default defineComponent({
     },
   },
   computed: {
+    filteredSongs() {
+      return this.songs.filter(
+        (song) =>
+          song.search_text.includes(this.search.toLowerCase()) ||
+          song.path.includes(this.search.toLowerCase()),
+      );
+    },
     selectedCoverImagePath() {
       return convertFileSrc(this.selected.cover_image_path);
     },
@@ -113,10 +121,16 @@ export default defineComponent({
       this.selectedIndex = index;
     },
     prevSong() {
-      this.playSong(this.songs[this.selectedIndex - 1], this.selectedIndex - 1);
+      this.playSong(
+        this.filteredSongs[this.selectedIndex - 1],
+        this.selectedIndex - 1,
+      );
     },
     nextSong() {
-      this.playSong(this.songs[this.selectedIndex + 1], this.selectedIndex + 1);
+      this.playSong(
+        this.filteredSongs[this.selectedIndex + 1],
+        this.selectedIndex + 1,
+      );
     },
     playPause() {
       if (!this.current) return;
@@ -179,7 +193,7 @@ export default defineComponent({
         </div>
 
         <div class="flex items-center gap-5">
-          <button @click="prevSong" :disabled="songs[currentIndex - 1]">
+          <button @click="prevSong" :disabled="filteredSongs[currentIndex - 1]">
             <LeftIcon />
           </button>
 
@@ -191,7 +205,7 @@ export default defineComponent({
           <button
             @click="nextSong"
             click="nextDay"
-            :disabled="songs[currentIndex + 1]"
+            :disabled="filteredSongs[currentIndex + 1]"
           >
             <RightIcon />
           </button>
@@ -203,6 +217,7 @@ export default defineComponent({
       class="bg-[#af4949] opacity-90 flex flex-col items-center w-[30%] h-screen ml-auto"
     >
       <input
+        v-model="search"
         class="border-b-1 border-[#F88379] w-full p-3 outline-none"
         type="text"
         placeholder="Search..."
@@ -214,7 +229,7 @@ export default defineComponent({
 
       <div class="flex flex-col w-full max-h-[89vh] overflow-y-auto">
         <button
-          v-for="(song, index) in songs"
+          v-for="(song, index) in filteredSongs"
           class="border-b border-[#F88379] w-full py-3 pl-3 flex cursor-pointer"
           @click="playSong(song, index)"
         >
