@@ -1,6 +1,6 @@
 use rusqlite::{Connection, Result};
 use walkdir::WalkDir;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use lofty::file::AudioFile;
 use lofty::file::TaggedFileExt;
@@ -14,6 +14,13 @@ use serde::{Serialize, Deserialize};
 
 struct Database {
     conn: Connection,
+}
+
+fn get_app_data_dir() -> PathBuf {
+    ProjectDirs::from("com", "rowan", "music")
+        .expect("Failed to get project directories")
+        .data_dir()
+        .to_path_buf()
 }
 
 #[derive(Serialize, Deserialize)]
@@ -149,10 +156,23 @@ fn extract_metadata(path: &Path) -> Music {
     let tagged_file = read_from_path(path).unwrap();
 
     let dur = tagged_file.properties().duration();
+
+     // Hash path for uniqueness
     let mut hasher = Sha256::new();
     hasher.update(path.to_string_lossy().as_bytes());
     let hash = format!("{:x}", hasher.finalize());
-    let cover_filename = format!("covers/{}.jpg", hash);
+    
+    // Target directory inside App Data (e.g., ~/.local/share/music/covers/)
+    let mut cover_dir = get_app_data_dir();
+    cover_dir.push("covers");
+    
+    // Make sure the covers directory exists
+    if let Err(e) = std::fs::create_dir_all(&cover_dir) {
+        eprintln!("Failed to create covers folder: {}", e);
+    }
+
+    let file_name = format!("{}.jpg", hash);
+    let full_cover_path = cover_dir.join(file_name);
 
     // Initialize defaults
     let mut title = String::new();
@@ -166,8 +186,13 @@ fn extract_metadata(path: &Path) -> Music {
         for picture in tag.pictures() {
             let image_data = picture.data();
             // save cover image to disk
-            if std::fs::write(&cover_filename, image_data).is_ok() {
-                saved_cover_path = cover_filename.clone();
+            match std::fs::write(&full_cover_path, image_data) {
+                Ok(_) => {
+                    saved_cover_path = full_cover_path.to_string_lossy().into_owned();
+                }
+                Err(e) => {
+                    eprintln!("Failed to write cover image to disk: {}", e);
+                }
             }
             break; // Stop after saving the first picture
         }
