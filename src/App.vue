@@ -56,6 +56,9 @@ export default defineComponent({
     },
   },
   computed: {
+    selectedCoverImagePath() {
+      return convertFileSrc(this.selected.cover_image_path);
+    },
     formattedTotalDuration() {
       if (!this.totalDuration) return "00:00";
 
@@ -132,8 +135,8 @@ export default defineComponent({
           class="h-60 flex flex-col items-center justify-center border w-full rounded-lg"
         >
           <img
-            v-if="selected.cover_image_path"
-            :src="selected.cover_image_path"
+            v-if="selected && selected.cover_image_path"
+            :src="selectedCoverImagePath"
             class="w-full h-full object-cover"
           />
           <MusicIcon v-else />
