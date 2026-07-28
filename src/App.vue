@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 import { defineComponent } from "vue";
 import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
@@ -26,7 +26,7 @@ export default defineComponent({
     };
   },
   async mounted() {
-    //invoke("scan_folder", {folder: "/Users/therealrinku/code/rowan-music/src" });
+    invoke("scan_folder", { folder: "/Users/therealrinku/Music" });
 
     const songs = await invoke("get_songs");
     this.songs = songs;
@@ -107,10 +107,16 @@ export default defineComponent({
       >
         <img
           class="w-full h-60 object-cover"
-          src="https://www.rollingstone.com/wp-content/uploads/2018/06/weeknd-starboy-album-review-92e9ca7c-8701-41e0-8720-2102a52cd1dd.jpg"
+          src="https://e7.pngegg.com/pngimages/784/317/png-clipart-blue-angle-symbol-number-music-library-blue-music-icon-illustration-blue-angle-thumbnail.png"
         />
 
-        <p>Weeknd - Starboy</p>
+        <p v-if="selected">
+          {{
+            selected.title ||
+            selected.path.split("/").pop().split(".").slice(0, -1).join("")
+          }}
+        </p>
+        <p v-else>select a music to get started</p>
 
         <div class="w-full flex flex-col gap-1">
           <div class="flex items-center justify-between w-full">
@@ -131,7 +137,7 @@ export default defineComponent({
             <LeftIcon />
           </button>
 
-          <button @click="playPause">
+          <button @click="playPause" :disabled="!selected">
             <PauseIcon v-if="playing" />
             <PlayIcon v-else />
           </button>
@@ -155,10 +161,14 @@ export default defineComponent({
       <div class="flex flex-col w-full max-h-[89vh] overflow-y-auto">
         <button
           v-for="song in songs"
-          class="border-b w-full py-3 pl-3 flex"
+          class="border-b border-white-400 w-full py-3 pl-3 flex cursor-pointer"
           @click="playSong(song)"
         >
-          ♫ {{ song.path.split("/").pop() }}
+          ♫
+          {{
+            song.title ||
+            song.path.split("/").pop().split(".").slice(0, -1).join("")
+          }}
         </button>
       </div>
     </div>
