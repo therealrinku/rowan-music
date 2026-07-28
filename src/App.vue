@@ -80,8 +80,11 @@ export default defineComponent({
   },
   methods: {
     playSong(song) {
+      if (this.current && !this.current.paused) {
+        this.current.pause();
+        this.playing = false;
+      }
       this.current = new Audio(convertFileSrc(song.path));
-      console.log(this.current);
       this.selected = song;
     },
     playPause() {
