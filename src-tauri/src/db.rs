@@ -117,7 +117,7 @@ pub fn get_songs() -> rusqlite::Result<Vec<Music>> {
     Ok(result)
 }
 
-pub fn scan(folder: &str) -> Result<()> {
+pub fn scan(folder: &str) -> rusqlite::Result<Vec<Music>> {
     let db = Database::new()?;
     db.setup_table();
 
@@ -141,7 +141,8 @@ pub fn scan(folder: &str) -> Result<()> {
         }
     }
 
-    Ok(())
+    let songs = get_songs();
+    Ok(songs?)
 }
 
 fn extract_metadata(path: &Path) -> Music {

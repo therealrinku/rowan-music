@@ -6,6 +6,7 @@ import PlayIcon from "./components/icons/play-icon.vue";
 import PauseIcon from "./components/icons/pause-icon.vue";
 import LeftIcon from "./components/icons/chevron-left-icon.vue";
 import RightIcon from "./components/icons/chevron-right-icon.vue";
+import Landing from "./components/landing.vue";
 
 export default defineComponent({
   name: "TimerTodoApp",
@@ -14,6 +15,7 @@ export default defineComponent({
     PauseIcon,
     LeftIcon,
     RightIcon,
+    Landing,
   },
   data() {
     return {
@@ -26,8 +28,6 @@ export default defineComponent({
     };
   },
   async mounted() {
-    invoke("scan_folder", { folder: "/Users/therealrinku/Music" });
-
     const songs = await invoke("get_songs");
     this.songs = songs;
     if (this.songs.length) {
@@ -79,6 +79,18 @@ export default defineComponent({
     },
   },
   methods: {
+    onSelectFolder(folder) {
+      this.selectedFolder = folder;
+      this.scan(this.selectedFolder);
+    },
+    async scan(folder) {
+      const songs = await invoke("scan_folder", { folder });
+      this.songs = songs;
+      if (this.songs.length) {
+        this.selected = this.songs[0];
+        this.current = new Audio(convertFileSrc(this.songs[0].path));
+      }
+    },
     playSong(song) {
       if (this.current && !this.current.paused) {
         this.current.pause();
@@ -103,7 +115,9 @@ export default defineComponent({
 </script>
 
 <template>
+  <landing @onSelectFolder="onSelectFolder" v-if="!songs.length" />
   <main
+    v-else
     class="bg-[#F88379] text-white min-h-screen min-w-screen text-sm tracking-wide flex items-center w-full min-h-screen"
   >
     <div
