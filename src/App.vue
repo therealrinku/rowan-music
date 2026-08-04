@@ -165,7 +165,7 @@ export default defineComponent({
         class="flex flex-col items-center justify-center gap-5 w-[60%] max-w-[600px]"
       >
         <div
-          class="h-60 flex flex-col items-center justify-center border w-full rounded-lg"
+          class="h-60 flex flex-col items-center justify-center border border-[#af4949] w-full rounded-lg"
         >
           <img
             v-if="selected && selected.cover_image_path"
