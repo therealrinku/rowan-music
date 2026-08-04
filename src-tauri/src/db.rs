@@ -190,19 +190,19 @@ fn extract_metadata(path: &Path) -> Music {
     let mut saved_cover_path = String::new();
 
     if let Some(tag) = tagged_file.primary_tag() {
-        for picture in tag.pictures() {
-            let image_data = picture.data();
-            // save cover image to disk
-            match std::fs::write(&full_cover_path, image_data) {
-                Ok(_) => {
-                    saved_cover_path = full_cover_path.to_string_lossy().into_owned();
-                }
-                Err(e) => {
-                    eprintln!("Failed to write cover image to disk: {}", e);
-                }
-            }
-            break; // Stop after saving the first picture
-        }
+        // for picture in tag.pictures() {
+        //     let image_data = picture.data();
+        //     // save cover image to disk
+        //     match std::fs::write(&full_cover_path, image_data) {
+        //         Ok(_) => {
+        //             saved_cover_path = full_cover_path.to_string_lossy().into_owned();
+        //         }
+        //         Err(e) => {
+        //             eprintln!("Failed to write cover image to disk: {}", e);
+        //         }
+        //     }
+        //     break; 
+        // }
 
         title = tag.get_string(ItemKey::TrackTitle).unwrap_or_default().to_string();
         artist = tag.get_string(ItemKey::TrackArtist).unwrap_or_default().to_string();
@@ -220,7 +220,9 @@ fn extract_metadata(path: &Path) -> Music {
         genre,
         album,
         year,
-        cover_image_path: saved_cover_path,
+        // not saving cover_image_path RN, as it may clutter the file system, exploring option to do it directly on the client
+        // cover_image_path: saved_cover_path,
+        cover_image_path: "".to_string(),
         search_text: search_content,
         duration: dur.as_secs() as i32,
         path: path.to_string_lossy().into_owned(),
