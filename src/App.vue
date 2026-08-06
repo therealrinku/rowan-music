@@ -236,7 +236,7 @@ export default defineComponent({
         <button
           v-for="(song, index) in filteredSongs"
           class="border-b border-[#F88379] w-full py-3 pl-3 flex cursor-pointer"
-          :class="{ 'bg-green-700' : selectedIndex === index }"
+          :class="{ 'bg-[#F88379] font-bold' : selectedIndex === index }"
           @click="playSong(song, index)"
         >
           ♫
